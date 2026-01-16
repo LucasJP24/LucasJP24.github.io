@@ -678,7 +678,8 @@ TrimPaddedGridInPlace(out_vertices, out_normals, out_indices, resolution_padding
                 <img src="/assets/media/images/results/compare_applynoise_libraries.png"" alt=" Image">
                 The total time here is the profiled area. On average, Noise1234 took about 47% of the total time, and
                 FastNoise took about 44% of the total time. This makes FastNoise, on average, about 6.65% faster than
-                Noise1234, with its highest speed-up at almost 11% for a resolution of 150.
+                Noise1234, with its highest speed-up at almost 11% for a resolution of 150. The table does show that
+                FastNoise scales worse than Noise1234, but there is not enough data too assume this.
 
                 <p></p>
                 The next steps for optimizing this tool even more would be multithreading. Besides that it gives an
@@ -702,7 +703,7 @@ TrimPaddedGridInPlace(out_vertices, out_normals, out_indices, resolution_padding
                     because of the advantages that it provides. Besides that I am using a relatively old library, I
                     recommend using
                     <a href="https://github.com/Auburn/FastNoise2" target="_blank">FastNoise2</a></li>
-                    instead.
+                    instead, but unfortunately I didn't end up having time to change to this faster library myself.
                 </p>
 
                 <h2>Sources</h2>
