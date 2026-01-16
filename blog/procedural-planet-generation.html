@@ -599,7 +599,7 @@ return noiseValue * strength;               </code></pre>
                 <h2>Challenges and Solutions</h2>
                 <p>
                     One of the problems that I was facing with the planet is that every time I reload the tool, I had
-                    redo the parameters. So the solution for this would be serialization. I learned about the
+                    to redo the parameters. So the solution for this would be serialization. I learned about the
                     <a href="https://github.com/nlohmann/json" target="_blank">nlohmann/json</a>
                     library. This library adds support for serialization of your structs in your code and then being
                     able to store it. Using this library also solved other problems for me; for example, it was easier
@@ -635,7 +635,8 @@ return noiseValue * strength;               </code></pre>
                 <pre><code class="language-cpp">for (int x = -1; x < resolution + 1; x++)
 {
     for (int y = -1; y < resolution + 1; y++) 
-    {             </code></pre>
+    {             
+    ...    </code></pre>
 
                 Instead of going over the normal resolution, you just make it a bit bigger. This is to calculate the
                 correct normals for the outer vertices of each face. Once everything is calculated, you trim the array
