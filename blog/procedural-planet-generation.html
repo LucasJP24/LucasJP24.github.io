@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Procedural Planet Generation (PPG) - Lucas</title>
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -40,7 +48,7 @@
             background: white;
             padding: 50px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         header {
@@ -87,7 +95,7 @@
             background: #f8f9fa;
             padding: 2px 6px;
             border-radius: 3px;
-            font-family: 'Courier New', monospace;
+            font-family: 'Cascadia Mono', 'Courier New', monospace;
             font-size: 0.9em;
         }
 
@@ -103,7 +111,9 @@
         .content pre code {
             background: none;
             padding: 0;
-            color: #ecf0f1;
+            color: #abb2bf;
+            font-family: 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
         }
 
         .content img {
@@ -112,10 +122,11 @@
             display: block;
             margin: 30px auto;
             border-radius: 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .content ul, .content ol {
+        .content ul,
+        .content ol {
             margin-left: 30px;
             margin-bottom: 20px;
         }
@@ -145,66 +156,570 @@
                 font-size: 1.5em;
             }
         }
+
+        /* Slider stuff for comparisng tool */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .image-compare-container {
+            display: grid;
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            line-height: 0;
+        }
+
+        /* Stack everything in the same grid cell */
+        .image-compare-container>* {
+            grid-area: 1 / 1;
+        }
+
+        .image-compare-container {
+            display: grid;
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            line-height: 0;
+        }
+
+        .image-compare-container>* {
+            grid-area: 1 / 1;
+        }
+
+        /* Images */
+        .image-a {
+            z-index: 2;
+            clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+        }
+
+        .image-b {
+            z-index: 1;
+        }
+
+        /* Labels - Moved to the bottom */
+        .label {
+            position: absolute;
+            /* Position at the very bottom edge of the image */
+            top: 100%;
+            /* -50% moves it up to sit perfectly on the line.
+           0% would sit below the line.
+           Adjust the second value (e.g., -20% or 10%) to move it exactly where you want.
+        */
+            transform: translateY(-50%);
+
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            /* Slightly darker for better contrast against background */
+            color: white;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            pointer-events: none;
+            line-height: 1;
+            z-index: 20;
+            user-select: none;
+        }
+
+        .label-before {
+            left: 1rem;
+        }
+
+        .label-after {
+            right: 1rem;
+        }
+
+        /* Since the labels now "hang" below the container, 
+       we need to add some margin to the bottom of the container 
+       so they don't overlap other content on your page.
+    */
+        .image-compare-container {
+            /* ... existing styles ... */
+            margin-bottom: 30px;
+            overflow: visible;
+            /* CRITICAL: Allows labels to show outside the rounded corners */
+        }
+
+        /* Slider Controls */
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: var(--pos);
+            width: 2px;
+            background: white;
+            z-index: 10;
+            /* Above images, below labels */
+            transform: translateX(-50%);
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .slider-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 30;
+            /* Highest z-index to capture all touch/mouse events */
+            opacity: 0;
+            cursor: ew-resize;
+        }
+
+        .handle-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+
+            /* --- Frame Scrubber Tool (Unique Styles) --- */
+            .frame-scrubber-wrapper {
+                max-width: 100%;
+                margin: 30px 0;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                text-align: center;
+                border: 1px solid #ecf0f1;
+            }
+
+            .scrubber-target {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 0 auto 20px auto;
+                border-radius: 5px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Using standard sizing and colors without the appearance reset */
+            .scrubber-input {
+                width: 100%;
+                margin: 15px 0;
+                cursor: pointer;
+                /* We use accent-color for a modern, standard way to theme sliders */
+                accent-color: #3498db;
+            }
+
+            .frame-counter-label {
+                font-size: 0.85rem;
+                color: #7f8c8d;
+                font-family: 'Cascadia Mono', 'Courier New', monospace;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                display: block;
+                margin-top: 10px;
+            }
+
+        }
+
+        .custom-table {
+            border-collapse: collapse;
+            /* Removes the double border look */
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-width: 600px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            /* Ensures the border-radius works */
+        }
+
+        /* Style for the first column (the headers) */
+        .custom-table th {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+            font-weight: bold;
+            padding: 12px 15px;
+            border-right: 1px solid #dddddd;
+        }
+
+        /* Style for the data cells */
+        .custom-table td {
+            padding: 12px 15px;
+            text-align: center;
+            background-color: #ffffff;
+            border-bottom: 1px solid #dddddd;
+        }
+
+        /* Alternating row colors for better readability */
+        .custom-table tr:nth-of-type(even) td {
+            background-color: #f3f3f3;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a href="../index.html" class="back-link">← Back to Home</a>
-        
+
         <article>
             <header>
                 <h1>Procedural Planet Generation (PPG)</h1>
                 <div class="meta">
-                    <span>Lucas Pastoor</span> • <span>Date TBD</span>
+                    <span>Lucas Pastoor</span> • <span>Date 16/01/2026</span>
+                    <div class="article-meta"><span id="reading-time">Calculating...</span></div>
                 </div>
             </header>
 
             <div class="content">
                 <!-- Introduction -->
                 <p>
-                    [Your introduction here - explain what procedural planet generation is and why you're interested in it]
+                    My goal was to make a procedural planet generator that can save the parameters and then load them in
+                    the game. The tool will use those parameters to regenerate the same planet.
+                <p></p>
+                This planet generator should be able to create more realistic Earth-like planets, and all these
+                parameters inside the tool can change at runtime and regenerate the planet to make a planet that fits
+                your game well. For a planet that can regenerate at runtime, it has to be very fast and efficient.
+                <img src="\assets\media\images\earth_w8_mountains2.png"" alt=" Image">
                 </p>
 
                 <!-- Main Content Sections -->
-                <h2>Overview</h2>
+                <h2>A sphere</h2>
                 <p>
-                    [Describe the project overview, goals, and scope]
+                    Before we start with generating planets, we need to figure out how to make a sphere that we can use.
+                    The sphere needs to be able to support different resolutions so it's easy to increase or decrease
+                    the level of detail. The sphere should be distributed evenly, and it does not necessarily need to
+                    support textures.
+                <p></p>
+                I decided to go with the cube sphere, a common method to create a sphere in games. It makes the terrain
+                generation simpler, since I am starting with 6 faces that I can easily remap to a sphere.
+                It aligns with what I said earlier; the number of vertices can be increased, while still being
+                distributed evenly along the planet.
+                <img src="https://acko.net/files/making-worlds/planets-1-cubemap.png"" alt=" Image">
                 </p>
 
-                <h2>Technical Approach</h2>
+                <h2>Perlin Noise</h2>
                 <p>
-                    [Explain your technical implementation, algorithms used, etc.]
+                    The most known method of generating terrain with noise is done by Perlin noise. Below is an example
+                    of 2D Perlin noise; the highest value in the noise is 1.0 (white), and the lowest value is 0.0
+                    (black). The reason that Perlin noise is favored for terrain generation is that it can create smooth
+                    and natural-looking landscapes.
+                    Unlike random noise, which creates chaotic and spiky terrain.
+
+                    <img src="https://th.bing.com/th/id/OIP.Q7QFj-Rtk6oScT25MX6AzwAAAA?w=145&h=150&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3"" width="
+                        380" alt="Image">
                 </p>
 
-                <h3>Subsection Example</h3>
+                <h2>Fractal Noise</h2>
                 <p>
-                    [Add details about specific aspects of your implementation]
+                    When talking about fractal noise, we are adding octaves to the noises; this is multiple layers of
+                    noise combined to form fractals in the noise, and it can give the terrain a more natural-looking
+                    feel.
+                <div class="frame-scrubber-wrapper"
+                    data-frames="/assets/media/images/octaves/1_octave.png,/assets/media/images/octaves/2_octaves.png,/assets/media/images/octaves/3_octaves.png,/assets/media/images/octaves/4_octaves.png,/assets/media/images/octaves/5_octaves.png,/assets/media/images/octaves/6_octaves.png,/assets/media/images/octaves/7_octaves.png,/assets/media/images/octaves/8_octaves.png">
+                    <img class="scrubber-target" src="" alt="Sequence 2">
+                    <input type="range" class="scrubber-input" min="0" value="0" step="1">
+                    <div class="frame-counter-label">
+                        Frame: <span class="scrubber-current">1</span> / <span class="scrubber-total">0</span>
+                    </div>
+                </div>
+
+                </p>
+                Each octave will add finer detail to the terrain, keeping the large mountains, but also the small
+                details. For every octave, the frequency increases by the lacunarity, and the amplitude decreases by the
+                gain. By default, the lacunarity is 2.0, and the gain is 0.5. By increasing the lacunarity, the
+                frequency will also increase faster, and this will create more lakes or gaps. The term "lacunarity" is
+                derived from the Latin word "lacuna" meaning "gap" or "lake." By increasing the gain closer to 1.0, the
+                octaves of the finer detail will have more influence, and this creates a more spiky terrain. By
+                decreasing the gain, the octaves of the finer detail will have less influence, creating a flatter
+                terrain.
                 </p>
 
-                <!-- Code Example -->
-                <pre><code>// Example code snippet
-void generatePlanet() {
-    // Your code here
+                <table class="custom-table">
+                    <tr>
+                        <th>Octave</th>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
+                        <td>8</td>
+                    </tr>
+                    <tr>
+                        <th>Frequency</th>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>4</td>
+                        <td>8</td>
+                        <td>16</td>
+                        <td>32</td>
+                        <td>64</td>
+                        <td>128</td>
+                    </tr>
+                    <tr>
+                        <th>Amplitude</th>
+                        <td>1</td>
+                        <td>1/2</td>
+                        <td>1/4</td>
+                        <td>1/8</td>
+                        <td>1/16</td>
+                        <td>1/32</td>
+                        <td>1/64</td>
+                        <td>1/128</td>
+                    </tr>
+                </table>
+
+                <h3>Code Calculation</h3>
+                <p>
+                    The code below computes fractal noise using multiple octaves, which is a common technique in terrain
+                    generation and procedural textures. For the input, I multiply the point (point on the unit sphere)
+                    by the base frequency, and I add a position, which is just an offset in the noise.
+                <p></p>
+                I run the ApplyNoise function, which uses the selected library and noise function. As I said earlier,
+                the noise returns a value between (-1, 1). For the terrain, I wanted the water level to start at 0 and
+                change the vertices. To still keep the negative noise values, I am transforming it into (0, 1).
+                <p></p>
+                I finish the loop by multiplying by the amplitude and then changing the base frequency and amplitude by
+                the lacunarity and gain as explained earlier.
+                <p></p>
+                After the loop, I apply a minValue to move the terrain down and get a noiseValue below 0. This does
+                create a problem, because if there should be water from 0, you don't want the water to have any height
+                as well. So I make sure to max the noise value to 0.0f.
+                </p>
+
+                <pre><code class="language-cpp">// Octaves calculation
+for ( int i = 0; i < octaves; i++ )
+{
+			glm::vec3 input = point * baseFrequency + position;
+			float v = ApplyNoise(input);
+			noiseValue += (v + 1) * 0.5f * amplitude;
+			baseFrequency *= lacunarity;
+			amplitude *= gain;
 }
-</code></pre>
+float minValue = m_noise_settings.minValue;
+noiseValue = noiseValue - minValue;
+return max(noiseValue * strength, 0.0f);
+}                </code></pre>
 
-                <!-- Image Example -->
-                <!-- <img src="path-to-your-image.png" alt="Description of image"> -->
+                <h2>Noise Filters</h2>
+                A noise filter takes an input and creates an output. In this case, it takes in a point of the planet and
+                outputs a noise value.
+                <p></p>
+                You can create multiple noise filters, and they have different methods of modifying the noise. The code
+                I just showed is part of the simple noise filter. This creates an even amount of finer detail for the
+                terrain. I will now compare that one to a different method, which is creating ridges. Ridges have
+                rougher terrain at the higher parts and a smoother fall at the bottom.
+
+                <h3>Difference between Terrain</h3>
+
+                <div class="image-compare-container" style="--pos: 50%;">
+
+                    <img src="\assets\media\images\sr\sr_ridge1.png" alt="After" class="image-b">
+                    <img src="\assets\media\images\sr\sr_simple2.png" alt="Before" class="image-a">
+
+                    <span class="label label-before">Simple</span>
+                    <span class="label label-after">Ridges</span>
+
+                    <div class="slider-handle">
+                        <div class="handle-line"></div>
+                        <div class="handle-circle">&#9664; &#9654;</div>
+                    </div>
+
+                    <input type="range" min="0" max="100" value="50" class="slider-input">
+                </div>
+
+                This might be a bit hard to see, so I also included the version of the normals, which shows the finer
+                details better. You can see that for the ridges, the top of the terrain is much more detailed. However,
+                on the bottom, it is much less detailed. You can see that there is almost no difference at the bottom
+                part next to the beach of the planet.
+
+
+                <div class="image-compare-container" style="--pos: 50%;">
+
+                    <img src="\assets\media\images\sr\sr_ridge1_normal.png" alt="After" class="image-b">
+                    <img src="\assets\media\images\sr\sr_simple2_normal.png" alt="Before" class="image-a">
+
+                    <span class="label label-before">Simple</span>
+                    <span class="label label-after">Ridges</span>
+
+                    <div class="slider-handle">
+                        <div class="handle-line"></div>
+                        <div class="handle-circle">&#9664; &#9654;</div>
+                    </div>
+
+                    <input type="range" min="0" max="100" value="50" class="slider-input">
+                </div>
+
+                <h3>Code Ridges</h3>
+                <p>
+                    The code below computes fractal noise using multiple octaves, which is a common technique in
+                    terrain generation and procedural textures.
+                </p>
+
+                <pre><code class="language-cpp">for ( int i = 0; i < octaves; i++ )
+{
+	glm::vec3 input = point * baseFrequency + position;
+	float v = 1 - std::abs(ApplyNoise(input));
+	v *= v;
+	v *= weigth;
+	weigth = glm::clamp((v * weightMultiplier), 0.0f, 1.0f);
+	noiseValue += v * amplitude;
+	baseFrequency *= lacunarity;
+	amplitude *= gain;
+}
+
+float minValue = m_noise_settings.minValue;
+noiseValue = noiseValue - minValue;
+return noiseValue * strength;               </code></pre>
 
                 <h2>Challenges and Solutions</h2>
                 <p>
-                    [Discuss any challenges you faced and how you solved them]
+                    One of the problems that I was facing with the planet is that every time I reload the tool. I have
+                    to redo the parameters. So the solution for this would be serialization. I learned about the
+                    <a href="https://github.com/nlohmann/json" target="_blank">nlohmann/json</a>
+                    library. This library adds support for serialization of your structs in your code and then being
+                    able to store it. Using this library also solved other problems for me; for example, it was easier
+                    to profile since I could restart the tool with the same settings with different resolutions.
+                <p></p>
+                There comes one complex problem with the cube sphere: it is impossible to apply a 2D texture to a sphere
+                without introducing seams. When taking a look at the normals at different resolutions (16, 32, 64, 256).
+                The seams are the most visible at the lowest resolution (16).
+                <div class="frame-scrubber-wrapper"
+                    data-frames="/assets/media/images/seams/resolution_16_normal.png,/assets/media/images/seams/resolution_32_normal.png,/assets/media/images/seams/resolution_64_normal.png,/assets/media/images/seams/resolution_256_normal.png">
+                    <img class="scrubber-target" src="" alt="Sequence 1">
+                    <input type="range" class="scrubber-input" min="0" value="0" step="1">
+                    <div class="frame-counter-label">
+                        Frame: <span class="scrubber-current">1</span> / <span class="scrubber-total">0</span>
+                    </div>
+                </div>
+
+                However, I found 2 solutions to solve this problem. The first solution is by following the article from
+                <a href="https://catlikecoding.com/unity/tutorials/procedural-meshes/seamless-cube-sphere/"
+                    target="blank">Seamless Cube Sphere - Catlike Coding</a>.
+                They explain how to modify the cube sphere so it only has positioned data and takes advantage of the
+                GPU. This is a good solution since the GPU wasn't busy, and now it has more work to do. So it is
+                splitting the workflow and calculating the normals, texcoords, and what you need on the GPU. There is
+                one problem; it does not state anything about the noise calculation. I assume that the noise has to be
+                done on the GPU too, and this entirely changes the project, which I didn't plan to do.
+                <p></p>
+                For solution 2, it would be from this
+                <a href="https://gamedev.stackexchange.com/questions/112206/removing-seams-between-procedurally-generated-spherical-terrain-tiles"
+                    target="blank">post</a>
+                about removing seams between procedurally generated spherical terrain tiles. It doesn't go very in-depth
+                on the solution itself, but the suggested solution was simple.
+
+                <pre><code class="language-cpp">for (int x = -1; x < resolution + 1; x++)
+{
+    for (int y = -1; y < resolution + 1; y++) 
+    {             </code></pre>
+
+                Instead of going over the normal resolution, you just make it a bit bigger. This is to calculate the
+                correct normals for the outer vertices of each face. Once everything is calculated, you trim the array
+                and make sure you only output the correct vertices of the resolution.
+
+                <pre><code class="language-cpp">
+RecalculateNormals(out_vertices, out_indices, out_normals);
+TrimPaddedGridInPlace(out_vertices, out_normals, out_indices, resolution_padding, pad);
+                 </code></pre>
+
+                When taking a look once more at the normals at different resolutions (16, 32, 64, 256). You don't notice
+                the seams anymore.
+
+                <div class="frame-scrubber-wrapper"
+                    data-frames="/assets/media/images/no_seams/resolution_16_normal.png,/assets/media/images/no_seams/resolution_32_normal.png,/assets/media/images/no_seams/resolution_64_normal.png,/assets/media/images/no_seams/resolution_256_normal.png">
+                    <img class="scrubber-target" src="" alt="Sequence 2">
+                    <input type="range" class="scrubber-input" min="0" value="0" step="1">
+                    <div class="frame-counter-label">
+                        Frame: <span class="scrubber-current">1</span> / <span class="scrubber-total">0</span>
+                    </div>
+                </div>
                 </p>
 
-                <h2>Results</h2>
+                <h2 id="results">Results</h2>
                 <p>
-                    [Show your results, performance metrics, visual output, etc.]
+                    Since my planet needed to be efficient, I did some profiling. I noticed that the point generated on
+                    the sphere is the most expensive, with about 45% that is a calculation of the noise and octaves. I
+                    started comparing the multiple noise libraries that I had included in the project.
+                    <a href="https://blog.weghos.com/love/LOVE/libraries/noise1234/" target="_blank">Noise1234</a>
+                    and
+                    <a href="https://github.com/Auburn/FastNoiseLite/tree/FastNoise-Legacy"
+                        target="_blank">Fastnoise-legacy</a>
+
+                <p></p>
+                So inside the ApplyNoise function, which handles selecting the correct noise and applies the correct
+                noise settings. I compared the libraries by speed. The Noise1234 library was using Perlin Noise, while
+                the FastNoise library was using Simplex Noise. Simplex noise recreates similar results as Perlin noise,
+                but it uses a different algorithm.
+                <img src="/assets/media/images/results/compare_applynoise_libraries.png"" alt=" Image">
+                The total time here is the profiled area. On average, Noise1234 took about 47% of the total time, and
+                FastNoise took about 44% of the total time. This makes FastNoise, on average, about 6.65% faster than
+                Noise1234, with its highest speed-up at almost 11% for a resolution of 150.
+
+                <p></p>
+                The next steps for optimizing this tool even more would be multithreading. Besides that it gives an
+                extreme speed-up, it also has another advantage. With multithreading, the regeneration of the planet can
+                be done in the background. This allows the tool to first regenerate the planet at a lower resolution and
+                then start with creating a higher resolution generation of the planet in the background, so the user
+                does not have any slowdowns and can still make use of the highest quality.
+
+
                 </p>
 
                 <h2>Conclusion</h2>
                 <p>
-                    [Wrap up your thoughts, future improvements, lessons learned]
+                    For improvements in the feature, LODs support would be the next feature because this would allow
+                    the planet to update certain chunks on the planet to keep the details always at a high level without
+                    having to keep the rest of the planet at a high resolution. I recommend checking out
+                    <a href="https://tulrich.com/geekstuff/sig-notes.pdf" target="_blank">Rendering Massive Terrains
+                        using chunked Level of Detail Control</a></li>
+                    if you are interested in doing LODs.
+                    As I said in <a href="#results">Results</a> for optimization, the next step would be multithreading
+                    because of the advantages that it provides. Besides that I am using a relatively old library, I
+                    recommend using
+                    <a href="https://github.com/Auburn/FastNoise2" target="_blank">FastNoise2</a></li>
+                    instead.
                 </p>
+
+                <h2>Sources</h2>
+                <ul>
+                    <li><a href="https://youtube.com/playlist?list=PLFt_AvWsXl0cONs3T0By4puYy6GM22ko8&si=9c0hnbmUzIcDZ6gq"
+                            target="_blank">Procedural Planet Generation
+                            by Sebastian Lague - Youtube</a></li>
+                    <li><a href="https://catlikecoding.com/unity/tutorials/procedural-meshes/seamless-cube-sphere/"
+                            target="_blank">Seamless Cube Sphere - Catlike Coding</a></li>
+                    <li><a href="https://github.com/nlohmann/json" target="_blank">nlohmann/json: JSON for Modern
+                            C++ - GitHub</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=Ydu4epKEM3I" target="_blank">Smooth Gradient Effect
+                            With Three.js Shaders (GLSL) For Beginners - YouTube</a></li>
+                    <li><a href="https://blog.weghos.com/love/LOVE/libraries/noise1234/" target="_blank">Noise1234</a>
+                    </li>
+                    <li><a href="https://github.com/Auburn/FastNoiseLite/tree/FastNoise-Legacy"
+                            target="_blank">Fastnoise-legacy</a></li>
+                </ul>
             </div>
 
             <footer>
@@ -212,5 +727,76 @@ void generatePlanet() {
             </footer>
         </article>
     </div>
+    <!-- Initialize syntax highlighting -->
+    <script>
+        hljs.highlightAll();
+
+        // 1. Select all slider containers on the page
+        const allSliders = document.querySelectorAll('.image-compare-container');
+
+        allSliders.forEach(container => {
+            // 2. Find the specific range input inside THIS container
+            const input = container.querySelector('.slider-input');
+
+            // 3. Update the CSS variable only for THIS container
+            input.addEventListener('input', (e) => {
+                container.style.setProperty('--pos', `${e.target.value}%`);
+            });
+        });
+
+        function updateReadingTime() {
+            const wordsPerMinute = 200;
+
+            // 1. Select the container that holds your text (e.g., 'body' or a specific '.content' div)
+            const textBlock = document.body.innerText;
+
+            // 2. Clean the text and count words
+            const words = textBlock.trim().split(/\s+/).length;
+
+            // 3. Calculate minutes (rounding up)
+            const readingTime = Math.ceil(words / wordsPerMinute);
+
+            // 4. Inject it into the HTML
+            document.getElementById('reading-time').innerText = `${readingTime} min read • ${words} words`;
+        }
+
+        // Run the function when the page is fully loaded
+        window.addEventListener('DOMContentLoaded', updateReadingTime);
+
+
+        // Frames Slider
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Find all scrubber containers on the page
+            const scrubbers = document.querySelectorAll('.frame-scrubber-wrapper');
+
+            scrubbers.forEach(container => {
+                // 2. Get the images from the data-frames attribute and turn into an array
+                const rawFrames = container.getAttribute('data-frames');
+                if (!rawFrames) return; // Skip if no frames provided
+
+                const frames = rawFrames.split(',').map(s => s.trim());
+
+                // 3. Find the internal elements for THIS specific scrubber
+                const imgElement = container.querySelector('.scrubber-target');
+                const slider = container.querySelector('.scrubber-input');
+                const currentLabel = container.querySelector('.scrubber-current');
+                const totalLabel = container.querySelector('.scrubber-total');
+
+                // 4. Initialize this specific instance
+                slider.max = frames.length - 1;
+                totalLabel.textContent = frames.length;
+                imgElement.src = frames[0];
+
+                // 5. Add the move event for this specific instance
+                slider.addEventListener('input', (e) => {
+                    const index = e.target.value;
+                    imgElement.src = frames[index];
+                    currentLabel.textContent = parseInt(index) + 1;
+                });
+            });
+        });
+
+    </script>
 </body>
+
 </html>
