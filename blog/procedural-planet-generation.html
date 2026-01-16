@@ -451,7 +451,7 @@
                 details. For every octave, the frequency increases by the lacunarity, and the amplitude decreases by the
                 gain. By default, the lacunarity is 2.0, and the gain is 0.5. By increasing the lacunarity, the
                 frequency will also increase faster, and this will create more lakes or gaps. The term "lacunarity" is
-                derived from the Latin word "lacuna" meaning "gap" or "lake." By increasing the gain closer to 1.0, the
+                derived from the Latin word "lacuna" meaning "gap" or "lake". By increasing the gain closer to 1.0, the
                 octaves of the finer detail will have more influence, and this creates a more spiky terrain. By
                 decreasing the gain, the octaves of the finer detail will have less influence, creating a flatter
                 terrain.
@@ -555,7 +555,7 @@ return max(noiseValue * strength, 0.0f);
                 This might be a bit hard to see, so I also included the version of the normals, which shows the finer
                 details better. You can see that for the ridges, the top of the terrain is much more detailed. However,
                 on the bottom, it is much less detailed. You can see that there is almost no difference at the bottom
-                part next to the beach of the planet.
+                part next to the beach on the planet.
 
 
                 <div class="image-compare-container" style="--pos: 50%;">
@@ -598,8 +598,8 @@ return noiseValue * strength;               </code></pre>
 
                 <h2>Challenges and Solutions</h2>
                 <p>
-                    One of the problems that I was facing with the planet is that every time I reload the tool. I have
-                    to redo the parameters. So the solution for this would be serialization. I learned about the
+                    One of the problems that I was facing with the planet is that every time I reload the tool, I had
+                    redo the parameters. So the solution for this would be serialization. I learned about the
                     <a href="https://github.com/nlohmann/json" target="_blank">nlohmann/json</a>
                     library. This library adds support for serialization of your structs in your code and then being
                     able to store it. Using this library also solved other problems for me; for example, it was easier
@@ -697,7 +697,7 @@ TrimPaddedGridInPlace(out_vertices, out_normals, out_indices, resolution_padding
                     <a href="https://tulrich.com/geekstuff/sig-notes.pdf" target="_blank">Rendering Massive Terrains
                         using chunked Level of Detail Control</a></li>
                     if you are interested in doing LODs.
-                    As I said in <a href="#results">Results</a> for optimization, the next step would be multithreading
+                    As I said in <a href="#results">Results</a>, for optimization, the next step would be multithreading
                     because of the advantages that it provides. Besides that I am using a relatively old library, I
                     recommend using
                     <a href="https://github.com/Auburn/FastNoise2" target="_blank">FastNoise2</a></li>
