@@ -1,0 +1,304 @@
+/* ==========================================================================
+   home.css — only loaded by index.html
+   Sections: hero → projects → contact footer
+   ========================================================================== */
+
+/* --- Hero ---------------------------------------------------------------- */
+.hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* The generated contour map. Faded out on the left so the text stays readable. */
+.hero__field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent 10%, #000 60%);
+    mask-image: linear-gradient(to right, transparent 10%, #000 60%);
+}
+
+.hero__inner {
+    position: relative;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: clamp(3rem, 8vw, 6.5rem) 1.5rem clamp(4.5rem, 9vw, 7.5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 3rem;
+}
+
+.hero__name {
+    font-size: clamp(3.2rem, 10vw, 7rem);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    margin-bottom: 1.5rem;
+}
+
+.hero__name span {
+    display: block;
+}
+
+.hero__role {
+    font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+    color: var(--color-text);
+    line-height: 1.35;
+    max-width: 36ch;
+}
+
+.hero__study {
+    margin-top: 0.25rem;
+    color: var(--color-text-muted);
+}
+
+.hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.hero__photo {
+    width: clamp(180px, 24vw, 300px);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface); /* visible while the photo loads */
+}
+
+/* "New terrain" control, bottom right of the hero */
+.hero__reseed {
+    position: absolute;
+    /* Line up with the content edge on wide screens, not the window edge */
+    right: max(1.5rem, calc((100% - var(--page-width)) / 2 + 1.5rem));
+    bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+@media (max-width: 720px) {
+    .hero__inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .hero__inner {
+        padding-bottom: 5.5rem; /* room for the "New terrain" control */
+    }
+
+    .hero__photo {
+        order: -1;            /* photo above the name on phones */
+        width: 140px;
+    }
+
+    .hero__field {
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+        mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+    }
+}
+
+/* --- Projects ------------------------------------------------------------ */
+.projects {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: clamp(3.5rem, 8vw, 6rem) 1.5rem;
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
+}
+
+.project-list {
+    display: grid;
+    gap: clamp(3rem, 7vw, 5rem);
+}
+
+/* One project row: image + text side by side */
+.project {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Every second project puts the image on the right */
+.project:nth-child(even) .project__media {
+    order: 2;
+}
+
+.project__media img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    transition: border-color 0.2s;
+}
+
+.project__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    letter-spacing: -0.015em;
+    margin-bottom: 0.75rem;
+}
+
+.project__title a {
+    color: var(--color-heading);
+}
+
+/* "Stretched link": the title link covers the whole row, so the entire
+   project is clickable while there is only ONE link for keyboard and
+   screen-reader users. */
+.project__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+.project__title a:focus-visible {
+    outline: none;
+}
+
+.project:has(.project__title a:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 8px;
+    border-radius: 12px;
+}
+
+.project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    list-style: none;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.9rem;
+}
+
+.project__description {
+    margin-top: 1rem;
+    color: var(--color-text-soft);
+    max-width: 60ch;
+}
+
+.project__cta {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: var(--color-link);
+    border-bottom: 1px solid currentColor;
+}
+
+/* Hover anywhere on the row: highlight image border + title */
+.project:hover .project__media img {
+    border-color: var(--color-accent);
+}
+
+.project:hover .project__title a {
+    color: var(--color-link);
+}
+
+/* Projects without a link aren't clickable */
+.project--static .project__cta {
+    display: none;
+}
+
+@media (max-width: 720px) {
+    .project {
+        grid-template-columns: 1fr;
+    }
+
+    .project:nth-child(even) .project__media {
+        order: 0;
+    }
+}
+
+/* --- Contact footer ------------------------------------------------------ */
+.site-footer {
+    border-top: 1px solid var(--color-border);
+}
+
+.site-footer__inner {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 5rem) 1.5rem 2rem;
+}
+
+/* --- Social links: icon with a small label below ------------------------ */
+.social-links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.75rem;
+    margin-bottom: 3rem;
+}
+
+/* Icon colour for single-colour logos. GitHub's guidelines only allow its
+   logo in white or black (or grey/green), so it's pure white/black here. */
+[data-theme="dark"] .social-links {
+    --color-icon: #ffffff;
+}
+
+[data-theme="light"] .social-links {
+    --color-icon: #000000;
+}
+
+.social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-text-muted);
+}
+
+.social-link__icon {
+    display: block;
+    width: 2.75rem;   /* 44px: above LinkedIn's 21px minimum, and a good tap size */
+    height: 2.75rem;
+    transition: transform 0.2s;
+}
+
+/* Single-colour icons: the SVG file is used as a stencil (mask) and the
+   element's background colour shows through it. So the icon takes its
+   colour from CSS, and follows the theme, even though it's an external file. */
+.social-link__icon--mono {
+    background-color: var(--color-icon);
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+}
+
+/* Paths are relative to THIS css file (assets/css/), not to index.html */
+.social-link__icon--github { --icon: url('../media/icons/github.svg'); }
+.social-link__icon--mail   { --icon: url('../media/icons/mail.svg'); }
+.social-link__icon--resume { --icon: url('../media/icons/file-text.svg'); }
+
+.social-link__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Hover: the label takes the accent colour, the logos keep their brand colours */
+.social-link:hover {
+    color: var(--color-link);
+}
+
+.social-link:hover .social-link__icon {
+    transform: translateY(-2px);
+}
+
+.site-footer__copy {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}

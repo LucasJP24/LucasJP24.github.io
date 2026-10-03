@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Tags — coloured labels like "C++" or "Procedural".
+   tag.js sets --tag-hue from data/tags.js. The theme tokens in base.css
+   decide how light/dark the background and text are, so ONE hue per tag
+   looks right in both dark and light mode.
+   ========================================================================== */
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+}
+
+.tag {
+    --tag-hue: 215;
+    --tag-fg-sat: 60%;
+    padding: 0.15rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    background: hsl(var(--tag-hue) var(--tag-sat) var(--tag-bg-l));
+    color: hsl(var(--tag-hue) var(--tag-fg-sat) var(--tag-fg-l));
+}
+
+/* A tag that isn't in data/tags.js turns grey, so you notice and add it */
+.tag--unknown {
+    --tag-sat: 0%;
+    --tag-fg-sat: 0%;
+}
