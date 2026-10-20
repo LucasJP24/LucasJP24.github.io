@@ -1,0 +1,37 @@
+/* ==========================================================================
+   Frame scrubber — a range slider that steps through a list of images.
+   The frame list lives in the HTML (data-frames); frame-scrubber.js wires it.
+   ========================================================================== */
+
+.frame-scrubber {
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.frame-scrubber__image {
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.frame-scrubber__input {
+    width: 100%;
+    margin: 15px 0;
+    cursor: pointer;
+    accent-color: var(--color-link);
+}
+
+.frame-scrubber__counter {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+}

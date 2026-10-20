@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Site header — brand on the left, links + theme toggle on the right.
+   Used on every page.
+   ========================================================================== */
+
+.site-header {
+    position: relative;
+    z-index: 5;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.site-header__brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-heading);
+    white-space: nowrap;
+}
+
+.site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.site-header__nav a {
+    color: var(--color-text-soft);
+}
+
+.site-header__nav a:hover {
+    color: var(--color-link);
+}
+
+/* --- Theme toggle -------------------------------------------------------- */
+.theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.theme-toggle:hover {
+    border-color: var(--color-accent);
+}
+
+.theme-toggle svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+/* Show the icon of the theme you would switch TO */
+[data-theme="dark"] .theme-toggle__moon,
+[data-theme="light"] .theme-toggle__sun {
+    display: none;
+}
