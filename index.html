@@ -41,6 +41,7 @@
         <a class="site-header__brand" href="./">Lucas Pastoor</a>
         <nav class="site-header__nav" aria-label="Main">
             <a href="#projects">Projects</a>
+            <a href="#about">About</a>
             <a href="#contact">Contact</a>
             <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
                 <!-- Sun: shown in dark mode (switch to light) -->
@@ -106,12 +107,56 @@
                 </noscript>
             </div>
         </section>
+
+        <!-- ========== About ========== -->
+        <section class="about" id="about" aria-labelledby="about-title">
+            <div class="about__inner">
+                <!-- Same photo as the hero. Empty alt: screen readers already
+                     heard "Portrait of Lucas Pastoor" there, no need to repeat it. -->
+                <img class="about__photo" src="assets/media/images/lucas.png" alt="" width="320" height="320"
+                    loading="lazy">
+
+                <div class="about__text">
+                    <h2 class="section-title" id="about-title">About me</h2>
+                    <p>
+                        Hi, I'm Lucas, a game programmer studying Creative Media & Game Technology at Breda
+                        University of
+                        Applied Sciences.
+                    </p>
+                    <p>
+                        My passion for making games started with playing them. I love sandbox games that let you build
+                        your own
+                        levels or minigames using your creativity. That made me want to learn how games are actually
+                        made, and I
+                        found a programme in Breda that teaches exactly that. That's where I'm now learning to make
+                        games in C++.
+                    </p>
+                    <p>
+                        What I like most about the programme is the freedom in projects: you choose what you want to
+                        learn. I
+                        started with graphics, then discovered procedural generation and gameplay, the topics that drive
+                        me most.
+                    </p>
+                    <p>
+                        Besides programming, I have plenty of hobbies that keep me healthy. I play hockey, go running
+                        and work out
+                        at the gym. I also enjoy cooking a good meal.
+                    </p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- ========== Contact ========== -->
     <footer class="site-footer" id="contact">
         <div class="site-footer__inner">
-            <h2 class="section-title">Get in touch</h2>
+            <hgroup class="site-footer__heading">
+                <h2 class="section-title">Get in touch</h2>
+                <p class="site-footer__lead">
+                    Feel free to contact me, I'm looking for a game programming internship starting September 2027.
+                </p>
+            </hgroup>
 
             <!-- Icons are decorative (aria-hidden / empty alt): the label text
                  below each one already gives the link its name. -->
