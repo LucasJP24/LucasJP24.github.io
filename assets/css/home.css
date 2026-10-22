@@ -158,6 +158,31 @@
     color: var(--color-heading);
 }
 
+/* "Coming soon" placeholder for projects without an image.
+   The box uses theme colours; the text is coming-soon.svg used as a mask
+   (same trick as the social icons), painted in the muted text colour. */
+.project__media--soon {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    transition: border-color 0.2s;
+}
+
+.project__media--soon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-text-muted);
+    -webkit-mask: url('../media/images/coming_soon.svg') center / 75% auto no-repeat;
+    mask: url('../media/images/coming_soon.svg') center / 75% auto no-repeat;
+}
+
+.project:hover .project__media--soon {
+    border-color: var(--color-accent);
+}
+
 /* "Stretched link": the title link covers the whole row, so the entire
    project is clickable while there is only ONE link for keyboard and
    screen-reader users. */
@@ -225,6 +250,55 @@
     }
 }
 
+/* --- About --------------------------------------------------------------- */
+.about {
+    border-top: 1px solid var(--color-border);
+}
+
+.about__inner {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: clamp(3.5rem, 8vw, 6rem) 1.5rem;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);   /* photo left, text right (mirrors the hero) */
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+}
+
+.about__photo {
+    width: clamp(200px, 26vw, 320px);
+    aspect-ratio: 1;                  /* square crop, so it doesn't look like a copy of the hero */
+    object-fit: cover;
+    object-position: center 25%;      /* keep the face in frame when cropping */
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.about__text .section-title {
+    margin-bottom: 1.5rem;
+}
+
+.about__text p {
+    max-width: 62ch;
+    color: var(--color-text-soft);
+    margin-bottom: 1rem;
+}
+
+.about__text p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+    .about__inner {
+        grid-template-columns: 1fr;
+    }
+
+    .about__photo {
+        width: 160px;
+    }
+}
+
 /* --- Contact footer ------------------------------------------------------ */
 .site-footer {
     border-top: 1px solid var(--color-border);
@@ -236,6 +310,21 @@
     padding: clamp(3rem, 7vw, 5rem) 1.5rem 2rem;
 }
 
+.site-footer__heading {
+    margin-bottom: 2.5rem;
+}
+
+/* Title sits closer to its subheader; the group keeps the old spacing below */
+.site-footer__heading .section-title {
+    margin-bottom: 0.75rem;
+}
+
+.site-footer__lead {
+    max-width: 50ch;
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+}
+
 /* --- Social links: icon with a small label below ------------------------ */
 .social-links {
     list-style: none;
@@ -245,8 +334,8 @@
     margin-bottom: 3rem;
 }
 
-/* Icon colour for single-colour logos. GitHub's guidelines only allow its
-   logo in white or black (or grey/green), so it's pure white/black here. */
+/* Icon colour for single-colour logos (GitHub, LinkedIn, mail, resume).
+   Pure white / black, as both brands' single-colour versions require. */
 [data-theme="dark"] .social-links {
     --color-icon: #ffffff;
 }
@@ -280,7 +369,8 @@
 }
 
 /* Paths are relative to THIS css file (assets/css/), not to index.html */
-.social-link__icon--github { --icon: url('../media/icons/github.svg'); }
+.social-link__icon--github   { --icon: url('../media/icons/github.svg'); }
+.social-link__icon--linkedin { --icon: url('../media/icons/linkedin.png'); }
 .social-link__icon--mail   { --icon: url('../media/icons/mail.svg'); }
 .social-link__icon--resume { --icon: url('../media/icons/file-text.svg'); }
 
@@ -289,7 +379,7 @@
     font-weight: 600;
 }
 
-/* Hover: the label takes the accent colour, the logos keep their brand colours */
+/* Hover: the label takes the accent colour, the logos stay white/black */
 .social-link:hover {
     color: var(--color-link);
 }
