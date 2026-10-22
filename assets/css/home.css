@@ -245,8 +245,8 @@
     margin-bottom: 3rem;
 }
 
-/* Icon colour for single-colour logos. GitHub's guidelines only allow its
-   logo in white or black (or grey/green), so it's pure white/black here. */
+/* Icon colour for single-colour logos (GitHub, LinkedIn, mail, resume).
+   Pure white / black, as both brands' single-colour versions require. */
 [data-theme="dark"] .social-links {
     --color-icon: #ffffff;
 }
@@ -280,7 +280,8 @@
 }
 
 /* Paths are relative to THIS css file (assets/css/), not to index.html */
-.social-link__icon--github { --icon: url('../media/icons/github.svg'); }
+.social-link__icon--github   { --icon: url('../media/icons/github.svg'); }
+.social-link__icon--linkedin { --icon: url('../media/icons/linkedin.png'); }
 .social-link__icon--mail   { --icon: url('../media/icons/mail.svg'); }
 .social-link__icon--resume { --icon: url('../media/icons/file-text.svg'); }
 
@@ -289,7 +290,7 @@
     font-weight: 600;
 }
 
-/* Hover: the label takes the accent colour, the logos keep their brand colours */
+/* Hover: the label takes the accent colour, the logos stay white/black */
 .social-link:hover {
     color: var(--color-link);
 }
