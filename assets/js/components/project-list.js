@@ -42,15 +42,18 @@ function createProjectCard(project, template) {
         card.classList.add('project--static');
     }
 
-    // Image (optional)
+    // Image (optional). No image = "Coming soon" placeholder, drawn in CSS
+    // so it follows the dark/light theme toggle.
     const media = field('media');
+    const image = media.querySelector('img');
     if (project.image) {
-        const image = media.querySelector('img');
         image.src = project.image;
         image.alt = project.imageAlt || '';
     } else {
-        media.remove();
-        card.classList.add('project--no-image');
+        image.remove();
+        media.classList.add('project__media--soon');
+        media.setAttribute('role', 'img');
+        media.setAttribute('aria-label', 'Coming soon');
     }
 
     // Facts like "8 weeks", "Solo project" (optional)

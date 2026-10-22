@@ -158,6 +158,31 @@
     color: var(--color-heading);
 }
 
+/* "Coming soon" placeholder for projects without an image.
+   The box uses theme colours; the text is coming-soon.svg used as a mask
+   (same trick as the social icons), painted in the muted text colour. */
+.project__media--soon {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    transition: border-color 0.2s;
+}
+
+.project__media--soon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-text-muted);
+    -webkit-mask: url('../media/images/coming_soon.svg') center / 75% auto no-repeat;
+    mask: url('../media/images/coming_soon.svg') center / 75% auto no-repeat;
+}
+
+.project:hover .project__media--soon {
+    border-color: var(--color-accent);
+}
+
 /* "Stretched link": the title link covers the whole row, so the entire
    project is clickable while there is only ONE link for keyboard and
    screen-reader users. */
