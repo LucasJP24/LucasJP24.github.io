@@ -1,0 +1,13 @@
+/* ==========================================================================
+   Draft helper — highlights unfinished text marked with class="todo".
+   Only link this file while a post is still a draft: once every .todo is
+   replaced, remove the <link> and the highlights disappear.
+   ========================================================================== */
+
+.todo {
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    border-left: 3px solid var(--color-accent);
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    font-style: italic;
+}

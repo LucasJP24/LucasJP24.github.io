@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TODO: final title + description -->
+    <title>Wave Function Collapse Plugin - Lucas Pastoor</title>
+    <meta name="description"
+        content="AutoWFC: a Wave Function Collapse plugin for Unreal Engine that identifies tile constraints automatically.">
+
+    <!-- Theme first (blocking on purpose: no flash of the wrong theme) -->
+    <script src="../assets/js/theme-init.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="../assets/media/favicon/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="../assets/media/favicon/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="../assets/media/favicon/apple-touch-icon.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600&display=swap">
+
+    <!-- Library CSS BEFORE our own, so our rules win when they conflict -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+    <!-- Shared + blog-post styles -->
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/components/site-header.css">
+    <link rel="stylesheet" href="../assets/css/post.css">
+
+    <!-- Components this post uses. Remove the ones you end up not using. -->
+    <link rel="stylesheet" href="../assets/css/components/media.css">
+    <link rel="stylesheet" href="../assets/css/components/compare-slider.css">
+    <link rel="stylesheet" href="../assets/css/components/diagram.css">
+    <link rel="stylesheet" href="../assets/css/components/frame-scrubber.css">
+    <link rel="stylesheet" href="../assets/css/components/data-table.css">
+    <link rel="stylesheet" href="../assets/css/components/notice.css">
+
+    <!-- DRAFT ONLY: highlights unfinished text. Delete this line when the post is done. -->
+    <link rel="stylesheet" href="../assets/css/components/todo.css">
+
+    <!-- `defer`: download in parallel, run in this order after the HTML is parsed -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script defer src="../assets/js/post.js"></script>
+    <script defer src="../assets/js/components/theme-toggle.js"></script>
+    <script defer src="../assets/js/components/reading-time.js"></script>
+    <script defer src="../assets/js/components/compare-slider.js"></script>
+    <script defer src="../assets/js/components/frame-scrubber.js"></script>
+</head>
+
+<body class="page-post">
+    <header class="site-header">
+        <a class="site-header__brand" href="../index.html">Lucas Pastoor</a>
+        <nav class="site-header__nav" aria-label="Main">
+            <a href="../index.html#projects">Projects</a>
+            <a href="../index.html#about">About</a>
+            <a href="../index.html#contact">Contact</a>
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+                <svg class="theme-toggle__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+                </svg>
+                <svg class="theme-toggle__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <article class="card article">
+            <header class="article-header">
+                <h1>Wave Function Collapse Plugin</h1>
+                <div class="meta">
+                    <!-- TODO: publish date (datetime = YYYY-MM-DD) -->
+                    <span>Lucas Pastoor</span> • <time datetime="2026-11-01">1 November 2026</time>
+                    <div data-reading-time>Calculating...</div>
+                </div>
+            </header>
+
+            <div class="content" data-reading-source>
+
+                <!-- ===== Introduction ===== -->
+                <p>
+                    Imagine generating a level or world from a huge set of tiles in minutes. This Unreal Engine plugin
+                    makes that possible by identifying all the constraints automatically.
+                </p>
+
+                <figure class="media">
+                    <video class="media__ambient" autoplay muted loop playsinline disablepictureinpicture
+                        poster="../assets/media/wfc-plugin/intro-poster.jpg">
+                        <source src="../assets/media/wfc-plugin/intro.mp4" type="video/mp4">
+                    </video>
+                    <figcaption>Samples from generating using the plugin</figcaption>
+                </figure>
+
+                <!-- Table of contents: one link per <h2 id="...">. Update when you add/remove sections. -->
+                <nav aria-label="Contents">
+                    <h2>Contents</h2>
+                    <ol>
+                        <li><a href="#problem">The problem</a></li>
+                        <li><a href="#existing-solutions">Existing solutions</a></li>
+                        <li><a href="#my-solution">My solution</a></li>
+                        <li><a href="#tile-validator">Tile Validator</a></li>
+                        <li><a href="#tile-cooker">Tile Cooker</a></li>
+                        <li><a href="#using-the-plugin">Using the plugin</a></li>
+                        <li><a href="#showcase">Showcase</a></li>
+                        <li><a href="#performance">Performance</a></li>
+                        <li><a href="#future-improvements">Future improvements</a></li>
+                        <li><a href="#conclusion">Conclusion</a></li>
+                    </ol>
+                </nav>
+
+                <!-- ===== 1. Problem ===== -->
+                <h2 id="problem">The problem</h2>
+                <p>
+                    Wave Function Collapse is a procedural algorithm that turns modular tiles into a level or world.
+                </p>
+                <p>
+                    The current workflow for using Wave Function Collapse starts with the artists. They make the
+                    tiles, so that they fit together nicely.
+                </p>
+
+                <img src="../assets/media/wfc-plugin/marians_tiles_to_generation.png"
+                    alt="The Model Data Asset in the Unreal Engine editor" loading="lazy">
+
+                <p>
+                    Then the assets are imported into the engine, but they don't work straight away. You need to
+                    create a set of rules that tells the algorithm which tile can fit next to which tile. These rules
+                    are also called constraints.
+                </p>
+                <p>
+                    This set of constraints can be stored in a data asset. You give this data asset to the Wave
+                    Function Collapse algorithm, and it generates a level.
+                </p>
+
+                <div class="media-row">
+                    <figure class="media" id="model-data-asset">
+                        <img src="../assets/media/wfc-plugin/model_data_asset.png"
+                            alt="The Model Data Asset in the Unreal Engine editor" loading="lazy">
+                        <figcaption>Model Data Asset</figcaption>
+                    </figure>
+                    <figure class="media">
+                        <img src="../assets/media/wfc-plugin/sample_scene.png"
+                            alt="A sample scene showing which tiles fit together" loading="lazy">
+                        <figcaption>Sample Scene</figcaption>
+                    </figure>
+                </div>
+
+                <p>
+                    One way of creating this data asset is by letting the artist build a sample scene. This tells
+                    another algorithm which tiles can fit next to each other, and it can then create a data asset
+                    from that.
+                </p>
+                <p>
+                    However, the problem is that making such a sample scene can take a lot of time, especially when
+                    there are a lot of tiles!
+                </p>
+
+                <!-- ===== 2. Existing solutions ===== -->
+                <h2 id="existing-solutions">Existing solutions</h2>
+                <p>
+                    Unreal Engine already provides a Wave Function Collapse plugin. It has everything in the workflow
+                    I just described, but that also means it doesn't solve the problem of sample scenes.
+                </p>
+                <p>
+                    Outside of Unreal Engine, there are many articles and implementations of Wave Function Collapse in
+                    many different languages, including C++. The problem is that they don't fit Unreal Engine straight
+                    away, but they are a good source for creating the plugin.
+                </p>
+
+                <!-- ===== 3. My solution ===== -->
+                <h2 id="my-solution">My solution</h2>
+                <p>
+                    The goal is to automatically convert all your assets, or tiles, into a data asset that works with
+                    the Wave Function Collapse algorithm.
+                </p>
+
+                <h3>First approach</h3>
+                <p>
+                    My original approach was to use Epic's implementation as a reference and start by coding my own
+                    Wave Function Collapse algorithm. Later I realised it makes more sense to end with this algorithm,
+                    because I now had to finish the whole algorithm and create a data asset manually, just to test it.
+                </p>
+                <p>
+                    This also affected the structure of the data asset, which made this approach much more difficult.
+                    It makes more sense to shape the data asset to fit the algorithm that identifies the constraints,
+                    which I will explain in the final approach.
+                </p>
+
+                <h3>Final approach</h3>
+                <p>
+                    For the final approach, I focused on solving the problem I defined at the beginning of this blog:
+                    creating the data asset automatically from the tiles or assets.
+                </p>
+                <p>
+                    To solve this problem, I created a new class: the Tile Validator. It figures out all the
+                    constraints for all the tiles and stores this data in a prototype data asset. At runtime, the Tile
+                    Cooker then cooks this into a model data asset. I will explain later why I decided to create a
+                    prototype data asset first.
+                </p>
+                <p>
+                    In this approach, I also decided to use Epic's plugin as a base instead of as a reference. This
+                    speeds up the work on the automation, but limits performance, which I will discuss at the end of
+                    this blog.
+                </p>
+                <p>
+                    Below is a diagram of the full high-level structure of the plugin.
+                </p>
+
+                <figure class="media">
+                    <!-- Inline SVG: colours come from diagram.css, so it follows the theme -->
+                    <svg class="diagram" viewBox="0 0 760 360" role="img" aria-labelledby="diagram-title diagram-desc">
+                        <title id="diagram-title">Class diagram of the AutoWFC plugin</title>
+                        <desc id="diagram-desc">In the editor module, the Tile Validator creates the Prototype Data
+                            Asset, which lives in the runtime module. In the runtime module, the Engine Subsystem
+                            contains
+                            the Tile Cooker, which reads the prototype and cooks the Model Data Asset, and the Wave
+                            Function
+                            Collapse, which reads the model. The Auto WFC Grid Actor calls the Engine Subsystem.</desc>
+
+                        <defs>
+                            <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8"
+                                markerHeight="8" orient="auto-start-reverse">
+                                <path class="diagram__arrowhead" d="M0 0 L10 5 L0 10 z" />
+                            </marker>
+                        </defs>
+
+                        <!-- Modules -->
+                        <rect class="diagram__group" x="10" y="10" width="200" height="340" rx="12" />
+                        <text class="diagram__group-label" x="26" y="36">Editor module</text>
+
+                        <rect class="diagram__group" x="230" y="10" width="520" height="340" rx="12" />
+                        <text class="diagram__group-label" x="246" y="36">Runtime module</text>
+
+                        <!-- Editor: Tile Validator -->
+                        <rect class="diagram__class" x="30" y="70" width="160" height="52" rx="6" />
+                        <text class="diagram__name" x="110" y="101" text-anchor="middle">Tile Validator</text>
+
+                        <!-- Runtime: Engine Subsystem with its two classes -->
+                        <rect class="diagram__container" x="250" y="52" width="480" height="136" rx="8" />
+                        <text class="diagram__name" x="266" y="78">Engine Subsystem</text>
+
+                        <rect class="diagram__class" x="270" y="100" width="180" height="52" rx="6" />
+                        <text class="diagram__name" x="360" y="131" text-anchor="middle">Tile Cooker</text>
+
+                        <rect class="diagram__class" x="520" y="100" width="190" height="52" rx="6" />
+                        <text class="diagram__name" x="615" y="131" text-anchor="middle">Wave Function Collapse</text>
+
+                        <!-- Auto WFC Grid Actor -->
+                        <rect class="diagram__class" x="250" y="230" width="160" height="60" rx="6" />
+                        <text class="diagram__stereotype" x="330" y="253" text-anchor="middle">«actor»</text>
+                        <text class="diagram__name" x="330" y="275" text-anchor="middle">Auto WFC Grid Actor</text>
+
+                        <!-- Prototype Data Asset (runtime module) -->
+                        <rect class="diagram__asset" x="430" y="230" width="140" height="60" rx="6" />
+                        <text class="diagram__stereotype" x="500" y="253" text-anchor="middle">«data asset»</text>
+                        <text class="diagram__name" x="500" y="275" text-anchor="middle">Prototype</text>
+
+                        <!-- Model Data Asset (runtime module) -->
+                        <rect class="diagram__asset" x="590" y="230" width="140" height="60" rx="6" />
+                        <text class="diagram__stereotype" x="660" y="253" text-anchor="middle">«data asset»</text>
+                        <text class="diagram__name" x="660" y="275" text-anchor="middle">Model</text>
+
+                        <!-- Arrows: solid = action, dashed = reads (arrow points to the data being read) -->
+                        <path class="diagram__arrow" d="M110 122 V320 H500 V292" marker-end="url(#arrowhead)" />
+                        <text class="diagram__label" x="118" y="200">creates</text>
+
+                        <path class="diagram__arrow diagram__arrow--reads" d="M440 152 V228"
+                            marker-end="url(#arrowhead)" />
+                        <text class="diagram__label" x="448" y="200">reads</text>
+
+                        <path class="diagram__arrow" d="M450 140 H485 V210 H640 V228" marker-end="url(#arrowhead)" />
+                        <text class="diagram__label" x="560" y="204">cooks</text>
+
+                        <path class="diagram__arrow diagram__arrow--reads" d="M690 152 V228"
+                            marker-end="url(#arrowhead)" />
+                        <text class="diagram__label" x="698" y="214">reads</text>
+
+                        <path class="diagram__arrow" d="M330 230 V190" marker-end="url(#arrowhead)" />
+                        <text class="diagram__label" x="338" y="216">calls</text>
+                    </svg>
+                    <figcaption>High-level structure of the plugin. Dashed arrows point to the data a class reads.
+                    </figcaption>
+                </figure>
+
+                <!-- ===== 4. Tile Validator ===== -->
+                <h2 id="tile-validator">Tile Validator</h2>
+                <p>
+                    The Tile Validator is the core algorithm that makes this plugin automatic. It goes over all
+                    your
+                    tiles and gets all the faces of each tile. For each face, it first checks whether the face
+                    is
+                    horizontal or vertical. Horizontal faces, the sides of the tile, are checked for symmetry
+                    and
+                    whether they are flipped,
+                    which is extra information that gets stored per face. Vertical faces, the up and down of the
+                    tile,
+                    are
+                    checked for invariance:
+                    Does rotating this face make it align differently? If two tiles have the same face, they get
+                    the
+                    same socket ID.
+                </p>
+                <p>
+                    All this data is stored in the prototype data asset. I decided to store it in this data
+                    asset
+                    first, instead of immediately creating a model data asset (suitable for the WFC), because
+                    this
+                    allows for much more flexibility. The user can change the prototype a bit and completely
+                    change
+                    the constraints, which makes it generate differently.
+                </p>
+                <p>
+                    For example, the game Bad North has a similar approach: for certain levels it only allows
+                    simple
+                    tiles, while other levels add more complex tiles. This can also be achieved with prototypes.
+                    With
+                    my prototype, you can already disable tiles and exclude tile connections, and more is
+                    planned.
+                </p>
+
+                <figure class="media">
+                    <img src="../assets/media/wfc-plugin/prototype_data_asset.png"
+                        alt="The Prototype Data Asset in the Unreal Engine editor" loading="lazy">
+                    <figcaption>Prototype Data Asset</figcaption>
+                </figure>
+
+                <h3>In-depth</h3>
+                <p>
+                    Going through the code for this algorithm gets quite complex, which is why I have decided to
+                    explain it at a high level instead. Each face of the tile is calculated by intersecting the
+                    tile
+                    with 6 planes. This is done inside a grid, which makes it cheaper and also helps with tiny
+                    float or
+                    geometry errors. All the intersected geometry is put into an occupancy grid: a grid of cells
+                    that
+                    are either true or false.
+                </p>
+
+                <div class="media-row">
+                    <figure class="media" id="model-data-asset">
+                        <img src="../assets/media/wfc-plugin/down_view_tile_face_example.png"
+                            alt="The Model Data Asset in the Unreal Engine editor" loading="lazy">
+                        <figcaption>Down view of the face of a tile</figcaption>
+                    </figure>
+                    <figure class="media">
+                        <img src="../assets/media/wfc-plugin/down_view_tile_face_occupancy_example.png"
+                            alt="A sample scene showing which tiles fit together" loading="lazy">
+                        <figcaption>Down view of it's occupancy grid</figcaption>
+                    </figure>
+                </div>
+
+                <p>
+                    This occupancy grid can then be turned into a hash. Faces with the same hash have the same
+                    geometry, but that does not mean they can match out of the box.
+                </p>
+                <p>
+                    As explained earlier, a horizontal face is checked for symmetry. If the face is symmetric,
+                    it gets
+                    the same socket ID with its state set to symmetric. If it is not symmetric, the flipped
+                    state is
+                    set. This is figured out by mirroring the face and calculating its hash. The higher of the
+                    two
+                    hashes gets flipped set to true.
+                </p>
+                <p>
+                    A vertical face is only checked for invariance. This is done by rotating the face 90 degrees
+                    and
+                    comparing the hash: if they are the same, the face is invariant. If they are different, the
+                    hash
+                    of every rotation is calculated, and the rotation with the smallest hash becomes index 0.
+                    The
+                    rotation index is the rotation of the vertical face.
+                </p>
+
+                <!-- ===== 5. Tile Cooker ===== -->
+                <h2 id="tile-cooker">Tile Cooker</h2>
+                <p>
+                    The Tile Cooker is an additional algorithm that I had to implement to bridge the gap between
+                    the
+                    prototype and the model. As shown earlier, the prototype contains data about each face of a
+                    tile:
+                    whether it is symmetric, flipped or invariant, its socket ID, and more.
+                </p>
+                <p>
+                    This data can't be used straight away by Epic's Wave Function Collapse algorithm, because
+                    their
+                    data asset has all the data cooked. That makes it heavier on memory, but faster at runtime.
+                    An
+                    additional advantage of cooking, instead of using the prototype as the model, is that it
+                    allows
+                    for more complex constraints. Working only with the face data of the tiles is not enough.
+                </p>
+                <p>
+                    The basic idea of this algorithm is that it goes over all the tiles and their face data, and
+                    checks which faces can match with other faces to actually solve the constraints. This
+                    results in
+                    the <a href="#model-data-asset">Model Data Asset</a> shown earlier.
+                </p>
+                <p>
+                    The reason this algorithm runs at runtime is that it lets games modify the prototype and
+                    then cook
+                    a new model, for example with a certain tile now enabled, to create a different level.
+                </p>
+
+                <!-- ===== 6. User documentation ===== -->
+                <h2 id="using-the-plugin">Using the plugin</h2>
+                <p>
+                    The plugin is made in Unreal Engine 5.8. It isn't released yet at the time of writing.
+                </p>
+
+                <!-- Installation: skipped for now. Uncomment when it's ready.
+                <h3>Installation</h3>
+                <ol>
+                    <li>Step</li>
+                </ol>
+                -->
+
+                <h3>Setting up a tile set</h3>
+                <ol>
+                    <li>Open the AutoWFC window. You can find it under <strong>Tools → Procedural</strong> (next
+                        to
+                        the PCG tool).</li>
+                    <li>Optionally, create a prototype data asset and link it in the window.</li>
+                    <li>Choose the settings you want in the menu. Tip: every setting has a tooltip.</li>
+                    <li>Select all the tiles in the scene that you want to use for your prototype.</li>
+                </ol>
+
+                <h3>Generating</h3>
+                <ol>
+                    <li>Place an AutoWFC Grid Actor in the scene.</li>
+                    <li>Give it the prototype data asset.</li>
+                    <li>Create a model data asset. This stores the cooked results (see the graph inside the
+                        Blueprint).</li>
+                    <li>Press Play, and it should generate. Make sure to check the log for any failures.</li>
+                </ol>
+
+                <h3>Settings</h3>
+                <p>
+                    These are the settings in the AutoWFC settings panel.
+                </p>
+                <div class="table-scroll">
+                    <table class="data-table data-table--list">
+                        <thead>
+                            <tr>
+                                <th scope="col">Setting</th>
+                                <th scope="col">What it does</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="data-table__group">
+                                <th colspan="2" scope="colgroup">Tile</th>
+                            </tr>
+                            <tr>
+                                <td>Tile Prototypes</td>
+                                <td>The output data asset that the WFC can use.</td>
+                            </tr>
+                            <tr>
+                                <td>Tile Size</td>
+                                <td>Edge length of the uniform tile cube. Every face is Tile Size × Tile Size.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Cell Size</td>
+                                <td>Edge length of a single occupancy cell on a face.</td>
+                            </tr>
+                            <tr>
+                                <td>Face Depth</td>
+                                <td>Distance inwards from each face plane within which geometry counts as
+                                    touching that
+                                    face.</td>
+                            </tr>
+                            <tr>
+                                <td>Mips</td>
+                                <td>The number of mips applied to the tile data, to lower the resolution and get
+                                    more
+                                    similar data. The mips use a lower base Cell Size when applied.</td>
+                            </tr>
+                            <tr>
+                                <td>Fill Inner Geometry</td>
+                                <td>Includes the inner geometry of the static mesh in the face hashing.</td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr class="data-table__group">
+                                <th colspan="2" scope="colgroup">Debug draw</th>
+                            </tr>
+                            <tr>
+                                <td>Tile Bounds</td>
+                                <td>Shows the bounds of the Tile Size around the static mesh.</td>
+                            </tr>
+                            <tr>
+                                <td>Grid Cells</td>
+                                <td>Shows the occupancy grid of all the cells at the set Cell Size.</td>
+                            </tr>
+                            <tr>
+                                <td>Face Sockets</td>
+                                <td>Shows the socket ID next to each face of a tile.</td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr class="data-table__group">
+                                <th colspan="2" scope="colgroup">Settings</th>
+                            </tr>
+                            <tr>
+                                <td>Create Empty Tile</td>
+                                <td>Creates an empty air tile.</td>
+                            </tr>
+                            <tr>
+                                <td>Create Solid Tile</td>
+                                <td>Creates a solid tile.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== 7. Showcase ===== -->
+                <h2 id="showcase">Showcase</h2>
+                <p>The examples below showcase the usage of the plugin and the levels that can be created by the
+                    plugin.
+                </p>
+
+                <figure class="media">
+                    <video controls muted loop playsinline preload="metadata"
+                        poster="../assets/media/wfc-plugin/showcase-1-poster.jpg">
+                        <source src="../assets/media/wfc-plugin/showcase-1.mp4" type="video/mp4">
+                    </video>
+                    <figcaption>This example shows the complete workflow to go from assets to a generated level. For
+                        simplicity only one asset is used in this example.
+                    </figcaption>
+                </figure>
+
+
+                <figure class="media">
+                    <video controls muted loop playsinline preload="metadata"
+                        poster="../assets/media/wfc-plugin/showcase-2-poster.jpg">
+                        <source src="../assets/media/wfc-plugin/showcase-2.mp4" type="video/mp4">
+                    </video>
+                    <figcaption>This example shows some of the possible generations after configuring a larger
+                        set of tiles. You can see that the algorithm doesn't know that tiles with a door should be at
+                        the ground floor, which is something that you cannot figure out from just the face data.
+                    </figcaption>
+                </figure>
+
+                <!-- ===== 8. Performance ===== -->
+                <h2 id="performance">Performance</h2>
+
+                <aside class="notice" aria-label="Coming later">
+                    <p class="notice__title">Coming later</p>
+                    <p>I'm still profiling the plugin. This section will show how long constraint identification
+                        and generation take for different grid sizes and tile sets.</p>
+                </aside>
+
+                <!-- Performance table: remove the notice above and uncomment this when the results are ready
+<div class="table-scroll">
+    <table class="data-table">
+        <tr>
+            <th scope="row">Grid size</th>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+        </tr>
+        <tr>
+            <th scope="row">Tiles in set</th>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+        </tr>
+        <tr>
+            <th scope="row">Constraint identification (ms)</th>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+        </tr>
+        <tr>
+            <th scope="row">Generation (ms)</th>
+            <td>TODO</td>
+            <td>TODO</td>
+            <td>TODO</td>
+        </tr>
+    </table>
+</div>
+-->
+
+                <!-- ===== 9. Future improvements ===== -->
+                <h2 id="future-improvements">Future improvements</h2>
+                <ul>
+                    <li>
+                        <strong>Flexibility of the prototype.</strong> There are many things you can change in
+                        the
+                        prototype to change the generation, but changing it manually can still be a tedious
+                        process.
+                        This can be improved by making it more interactive through the AutoWFC window and
+                        appending
+                        changes to the model, like changing multiple faces or tiles at the same time.
+                    </li>
+                    <li>
+                        <strong>Visual display.</strong> The tiles in the scene can show their occupancy grid
+                        and
+                        socket ID, but I would like them to also show their states for symmetry, invariance and
+                        more.
+                        This helps spot connections and issues earlier, and could also make editing the
+                        prototype
+                        easier.
+                    </li>
+                    <li>
+                        <strong>Sample scene creation.</strong> Since the goal of this plugin was to eliminate
+                        creating
+                        the sample scene, it would still be nice to generate one from the model. This shows all
+                        the
+                        possible connections more easily and helps spot bad connections.
+                    </li>
+                    <li>
+                        <strong>Backtracking.</strong> A great optimisation that Epic Games' Wave Function
+                        Collapse
+                        algorithm lacks is backtracking. Currently it is quite slow, since it gives up in the
+                        middle of
+                        the generation when there is an impossible connection (a tile that has no possible
+                        options
+                        left).
+                    </li>
+                </ul>
+
+                <!-- ===== 10. Conclusion ===== -->
+                <h2 id="conclusion">Conclusion</h2>
+                <p>
+                    This was my first time creating a plugin for Unreal Engine, and also my first time writing
+                    C++
+                    inside Unreal Engine. I learned about the structure of plugins, how modules are set up, and
+                    the
+                    separation between runtime and editor code. On the C++ side, I learned about all the macros
+                    that
+                    come with Unreal Engine, and how to use its standard library, which can do quite a lot.
+                </p>
+
+                <!-- ===== Sources ===== -->
+                <h2>Sources</h2>
+                <ul>
+                    <li><a href="https://marian42.de/article/wfc/" target="_blank" rel="noopener">Marian
+                            Kleineberg,
+                            "Infinite procedurally generated city with the Wave Function Collapse algorithm"</a>
+                    </li>
+                    <li><a href="https://github.com/marian42/wavefunctioncollapse" target="_blank"
+                            rel="noopener">marian42/wavefunctioncollapse on GitHub</a></li>
+                    <li><a href="https://christianjmills.com/posts/wave-function-collapse-for-3d-notes/index.html"
+                            target="_blank" rel="noopener">Christian Mills, "Notes on WaveFunctionCollapse for
+                            3D"
+                            (summary of Martin Donald's video)</a></li>
+                    <li><a href="https://youtu.be/2SuvO4Gi7uY" target="_blank" rel="noopener">Martin Donald,
+                            "Superpositions, Sudoku, the Wave Function Collapse algorithm"</a></li>
+                    <li><a href="https://www.pcgworkshop.com/archive/newgas2021tessera.pdf" target="_blank"
+                            rel="noopener">Adam Newgas, "Tessera: A Practical System for Extended
+                            WaveFunctionCollapse"
+                            (PCG Workshop 2021)</a></li>
+                    <li><a href="https://www.boristhebrave.com/docs/tessera/6/articles/tutorials/getting_started.html"
+                            target="_blank" rel="noopener">Tessera Getting Started (face painting)</a></li>
+                    <li><a href="https://www.lexaloffle.com/bbs/?tid=49913" target="_blank" rel="noopener">PICO-8
+                            simple tiled model with bitfield sockets</a></li>
+                </ul>
+            </div>
+
+            <footer class="article-footer">
+                <p><a href="../index.html">Back to Home</a></p>
+            </footer>
+        </article>
+    </div>
+</body>
+
+</html>

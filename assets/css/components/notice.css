@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Notice — a highlighted box for short messages inside an article,
+   e.g. "Coming later" for a section that isn't written yet.
+   Unlike .todo (draft-only), this is meant to be visible to readers.
+   ========================================================================== */
+
+.notice {
+    margin: 20px 0 30px;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: var(--radius);
+    background: var(--color-surface-alt);
+}
+
+/* Loaded after post.css, so this wins over `.content p` (same specificity) */
+.notice p {
+    margin: 0;
+    text-align: left;
+}
+
+.notice p + p {
+    margin-top: 0.35rem;
+}
+
+.notice__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-heading);
+}
