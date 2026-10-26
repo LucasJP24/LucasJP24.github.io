@@ -37,3 +37,30 @@
 .data-table tr:nth-of-type(even) td {
     background-color: var(--color-surface-alt);
 }
+
+/* --- List variant: headers on top, one item per row (e.g. a settings table) ---
+   <table class="data-table data-table--list"> with <thead> column headers.
+   Optional group rows: <tr class="data-table__group"><th colspan="3">Name</th></tr> */
+.data-table--list {
+    width: 100%;
+}
+
+.data-table--list th {
+    border-right: none;
+}
+
+.data-table--list td {
+    text-align: left;
+    vertical-align: top;
+}
+
+.data-table--list td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.data-table--list .data-table__group th {
+    background: var(--color-surface-alt);
+    color: var(--color-heading);
+    font-size: 0.85rem;
+}

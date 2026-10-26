@@ -31,8 +31,8 @@ const PROJECTS = [
         description:
             'A Wave Function Collapse plugin for Unreal Engine that identifies its constraints automatically.',
         tags: ['Unreal Engine', 'Procedural'],
-        // image: 'assets/media/images/wfc/cover.png',
-        // link: 'blog/wfc-plugin.html',
+        image: 'assets/media/images/wfc/cover.png',
+        link: 'blog/wfc-plugin.html',
     },
     {
         title: 'Whoop Engine',
